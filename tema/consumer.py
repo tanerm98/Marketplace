@@ -7,6 +7,7 @@ March 2020
 """
 
 from threading import Thread
+import time
 
 
 class Consumer(Thread):
@@ -31,7 +32,21 @@ class Consumer(Thread):
         :type kwargs:
         :param kwargs: other arguments that are passed to the Thread's __init__()
         """
-        pass
+        Thread.__init__(self, **kwargs)
+
+        self.carts = carts
+        self.marketplace = marketplace
+        self.retry_wait_time = retry_wait_time
+        self.name = kwargs['name']
 
     def run(self):
+        for cart in self.carts:
+            for action in cart:
+                action_type = action["type"]
+                product = action["product"]
+                quantity = action["quantity"]
+
+                for piece in range(quantity):
+
+        time.sleep(10)
         pass

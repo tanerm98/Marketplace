@@ -25,7 +25,7 @@ class Marketplace:
         """
         Returns an id for the producer that calls this.
         """
-        pass
+        return None
 
     def publish(self, producer_id, product):
         """
@@ -39,7 +39,7 @@ class Marketplace:
 
         :returns True or False. If the caller receives False, it should wait and then try again.
         """
-        pass
+        return True
 
     def new_cart(self):
         """

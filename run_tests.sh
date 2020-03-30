@@ -13,9 +13,9 @@ for i in {1..9}
 do
    rm -f "${TESTS}/0$i".out
    echo "Starting test $i"
-   ${PYTHON_CMD} test.py "${TESTS}/0$i.in" > "${TESTS}/0$i.out"
+   ${PYTHON_CMD} test.py "${TESTS}/0$i.in" #> "${TESTS}/0$i.out"
    echo "Finished test $i"
-   ${PYTHON_CMD} check_test.py $i "${TESTS}/0$i.out" "${TESTS}/0$i.ref.out"
+   #${PYTHON_CMD} check_test.py $i "${TESTS}/0$i.out" "${TESTS}/0$i.ref.out"
 done
 
 rm -f "${TESTS}/10".out
