@@ -47,7 +47,7 @@ class Marketplace:
 
         :returns an int representing the cart_id
         """
-        pass
+        return 0
 
     def add_to_cart(self, cart_id, product):
         """
@@ -61,7 +61,7 @@ class Marketplace:
 
         :returns True or False. If the caller receives False, it should wait and then try again
         """
-        pass
+        return True
 
     def remove_from_cart(self, cart_id, product):
         """

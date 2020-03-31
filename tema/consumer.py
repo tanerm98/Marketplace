@@ -41,12 +41,20 @@ class Consumer(Thread):
 
     def run(self):
         for cart in self.carts:
+            cart_id = self.marketplace.new_cart()
+
             for action in cart:
                 action_type = action["type"]
                 product = action["product"]
                 quantity = action["quantity"]
 
                 for piece in range(quantity):
+                    if action_type == "add":
+                        succesful_action = self.marketplace.add_to_cart(cart_id, product)
 
-        time.sleep(10)
-        pass
+                        while succesful_action is False:
+                            time.sleep(self.retry_wait_time)
+                            succesful_action = self.marketplace.add_to_cart(cart_id, product)
+
+                    elif action_type == "remove":
+                        self.marketplace.remove_from_cart(cart_id, product)
