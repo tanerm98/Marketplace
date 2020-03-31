@@ -59,4 +59,6 @@ class Consumer(Thread):
                     elif action_type == "remove":
                         self.marketplace.remove_from_cart(cart_id, product)
 
-            self.marketplace.place_order(cart_id)
+            bought_products = self.marketplace.place_order(cart_id)
+            for bought_product in bought_products:
+                print("{} bought {}".format(self.name, bought_product))
