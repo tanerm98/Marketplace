@@ -6,6 +6,8 @@ Assignment 1
 March 2020
 """
 
+import threading
+import uuid
 
 class Marketplace:
     """
@@ -19,13 +21,20 @@ class Marketplace:
         :type queue_size_per_producer: Int
         :param queue_size_per_producer: the maximum size of a queue associated with each producer
         """
-        pass
+        self.queue_size_per_producer = queue_size_per_producer
+
+        self.producers = {}
+        self.consumers = {}
 
     def register_producer(self):
         """
         Returns an id for the producer that calls this.
         """
-        return None
+        producer_id = str(threading.current_thread().name)
+        if producer_id not in self.producers:
+            self.producers[producer_id] = []
+
+        return producer_id
 
     def publish(self, producer_id, product):
         """
@@ -39,7 +48,15 @@ class Marketplace:
 
         :returns True or False. If the caller receives False, it should wait and then try again.
         """
-        return True
+        if producer_id not in self.producers:
+            print("ERROR finding producer {} when publishing product!".format(producer_id))
+            return False
+
+        if len(self.producers[producer_id]) < self.queue_size_per_producer:
+            self.producers[producer_id].append(product)
+            return True
+
+        return False
 
     def new_cart(self):
         """
@@ -47,7 +64,14 @@ class Marketplace:
 
         :returns an int representing the cart_id
         """
-        return 0
+        consumer_id = str(threading.current_thread().name)
+        cart_id = str(consumer_id) + "_" + str(uuid.uuid4())
+
+        if consumer_id not in self.consumers:
+            self.consumers[consumer_id] = {}
+        self.consumers[consumer_id][cart_id] = []
+
+        return cart_id
 
     def add_to_cart(self, cart_id, product):
         """
@@ -61,7 +85,22 @@ class Marketplace:
 
         :returns True or False. If the caller receives False, it should wait and then try again
         """
-        return True
+        consumer_id = str(threading.current_thread().name)
+
+        if consumer_id not in self.consumers:
+            print("ERROR finding consumer {} when adding to cart!".format(consumer_id))
+            return False
+
+        if cart_id not in self.consumers[consumer_id]:
+            print("ERROR finding cart {} of consumer {} when adding to cart!".format(cart_id, consumer_id))
+            return False
+
+        for producer in self.producers:
+            if product in self.producers[producer]:
+                self.consumers[consumer_id][cart_id].append(product)
+                return True
+
+        return False
 
     def remove_from_cart(self, cart_id, product):
         """
@@ -73,7 +112,17 @@ class Marketplace:
         :type product: Product
         :param product: the product to remove from cart
         """
-        pass
+        consumer_id = str(threading.current_thread().name)
+
+        if consumer_id not in self.consumers:
+            print("ERROR finding consumer {} when removing from cart!".format(consumer_id))
+            return False
+
+        if cart_id not in self.consumers[consumer_id]:
+            print("ERROR finding cart {} of consumer {} when removing from cart!".format(cart_id, consumer_id))
+            return False
+
+        self.consumers[consumer_id][cart_id].remove(product)
 
     def place_order(self, cart_id):
         """
@@ -82,4 +131,14 @@ class Marketplace:
         :type cart_id: Int
         :param cart_id: id cart
         """
-        pass
+        consumer_id = str(threading.current_thread().name)
+
+        if consumer_id not in self.consumers:
+            print("ERROR finding consumer {} when placing order!".format(consumer_id))
+            return False
+
+        if cart_id not in self.consumers[consumer_id]:
+            print("ERROR finding cart {} of consumer {} when placing order!".format(cart_id, consumer_id))
+            return False
+
+        return self.consumers[consumer_id][cart_id]

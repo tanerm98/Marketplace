@@ -58,3 +58,5 @@ class Consumer(Thread):
 
                     elif action_type == "remove":
                         self.marketplace.remove_from_cart(cart_id, product)
+
+            self.marketplace.place_order(cart_id)
