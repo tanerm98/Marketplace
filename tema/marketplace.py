@@ -48,15 +48,16 @@ class Marketplace:
 
         :returns True or False. If the caller receives False, it should wait and then try again.
         """
-        if producer_id not in self.producers:
-            print("ERROR finding producer {} when publishing product!".format(producer_id))
+        try:
+            if len(self.producers[producer_id]) < self.queue_size_per_producer:
+                self.producers[producer_id].append(product)
+                return True
+
             return False
 
-        if len(self.producers[producer_id]) < self.queue_size_per_producer:
-            self.producers[producer_id].append(product)
-            return True
-
-        return False
+        except KeyError:
+            print("ERROR finding producer {} when publishing product!".format(producer_id))
+            return False
 
     def new_cart(self):
         """
@@ -87,21 +88,19 @@ class Marketplace:
         """
         consumer_id = str(threading.current_thread().name)
 
-        if consumer_id not in self.consumers:
-            print("ERROR finding consumer {} when adding to cart!".format(consumer_id))
+        try:
+            for producer in self.producers:
+                if product in self.producers[producer]:
+                    self.producers[producer].remove(product)
+                    self.consumers[consumer_id][cart_id].append((producer, product))
+                    return True
+
             return False
 
-        if cart_id not in self.consumers[consumer_id]:
+        except KeyError:
             print("ERROR finding cart {} of consumer {} when adding to cart!"
                   .format(cart_id, consumer_id))
             return False
-
-        for producer in self.producers:
-            if product in self.producers[producer]:
-                self.consumers[consumer_id][cart_id].append(product)
-                return True
-
-        return False
 
     def remove_from_cart(self, cart_id, product):
         """
@@ -115,16 +114,18 @@ class Marketplace:
         """
         consumer_id = str(threading.current_thread().name)
 
-        if consumer_id not in self.consumers:
-            print("ERROR finding consumer {} when removing from cart!".format(consumer_id))
-            return
+        try:
+            for element in self.consumers[consumer_id][cart_id]:
+                (producer, product_to_remove) = element
+                if product_to_remove == product:
+                    self.consumers[consumer_id][cart_id].remove(element)
+                    self.producers[producer].append(product_to_remove)
+                    return
 
-        if cart_id not in self.consumers[consumer_id]:
+        except KeyError:
             print("ERROR finding cart {} of consumer {} when removing from cart!"
                   .format(cart_id, consumer_id))
             return
-
-        self.consumers[consumer_id][cart_id].remove(product)
 
     def place_order(self, cart_id):
         """
@@ -135,13 +136,13 @@ class Marketplace:
         """
         consumer_id = str(threading.current_thread().name)
 
-        if consumer_id not in self.consumers:
-            print("ERROR finding consumer {} when placing order!".format(consumer_id))
-            return False
+        try:
+            order = []
+            for element in self.consumers[consumer_id][cart_id]:
+                order.append(element[1])
 
-        if cart_id not in self.consumers[consumer_id]:
+            return order
+        except KeyError:
             print("ERROR finding cart {} of consumer {} when placing order!"
                   .format(cart_id, consumer_id))
-            return False
-
-        return self.consumers[consumer_id][cart_id]
+            return []
