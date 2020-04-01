@@ -92,7 +92,8 @@ class Marketplace:
             return False
 
         if cart_id not in self.consumers[consumer_id]:
-            print("ERROR finding cart {} of consumer {} when adding to cart!".format(cart_id, consumer_id))
+            print("ERROR finding cart {} of consumer {} when adding to cart!"
+                  .format(cart_id, consumer_id))
             return False
 
         for producer in self.producers:
@@ -116,11 +117,12 @@ class Marketplace:
 
         if consumer_id not in self.consumers:
             print("ERROR finding consumer {} when removing from cart!".format(consumer_id))
-            return False
+            return
 
         if cart_id not in self.consumers[consumer_id]:
-            print("ERROR finding cart {} of consumer {} when removing from cart!".format(cart_id, consumer_id))
-            return False
+            print("ERROR finding cart {} of consumer {} when removing from cart!"
+                  .format(cart_id, consumer_id))
+            return
 
         self.consumers[consumer_id][cart_id].remove(product)
 
@@ -138,7 +140,8 @@ class Marketplace:
             return False
 
         if cart_id not in self.consumers[consumer_id]:
-            print("ERROR finding cart {} of consumer {} when placing order!".format(cart_id, consumer_id))
+            print("ERROR finding cart {} of consumer {} when placing order!"
+                  .format(cart_id, consumer_id))
             return False
 
         return self.consumers[consumer_id][cart_id]

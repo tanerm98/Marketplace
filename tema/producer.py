@@ -6,9 +6,8 @@ Assignment 1
 March 2020
 """
 
-from threading import Thread, Lock
+from threading import Thread
 import time
-myLock = Lock()
 
 class Producer(Thread):
     """
@@ -39,20 +38,22 @@ class Producer(Thread):
         self.republish_wait_time = republish_wait_time
         self.name = kwargs['name']
 
-        self.id = None
+        self.prod_id = None
 
     def run(self):
-        self.id = self.marketplace.register_producer()
+        self.prod_id = self.marketplace.register_producer()
         while True:
             for product_type in self.products:
                 product = product_type[0]
                 quantity = product_type[1]
                 producing_time = product_type[2]
 
-                for piece in range(quantity):
+                for _ in range(quantity):
                     time.sleep(producing_time)
-                    succesfuly_published = self.marketplace.publish(producer_id=self.id, product=product)
+                    succesfuly_published = self.marketplace.publish(producer_id=self.prod_id,
+                                                                    product=product)
 
                     while succesfuly_published is False:
                         time.sleep(self.republish_wait_time)
-                        succesfuly_published = self.marketplace.publish(producer_id=self.id, product=product)
+                        succesfuly_published = self.marketplace.publish(producer_id=self.prod_id,
+                                                                        product=product)

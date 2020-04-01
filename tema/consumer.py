@@ -48,7 +48,7 @@ class Consumer(Thread):
                 product = action["product"]
                 quantity = action["quantity"]
 
-                for piece in range(quantity):
+                for _ in range(quantity):
                     if action_type == "add":
                         succesful_action = self.marketplace.add_to_cart(cart_id, product)
 
