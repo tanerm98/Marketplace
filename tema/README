@@ -1,0 +1,22 @@
+Taner Mustafa - 335CB - ASC - Tema 1
+
+    Implementarea problemei de consumer-producer este realizata fara elemente de
+sincronizare, ci numai cu dictionare si liste, care sunt thread-safe in python.
+
+    Marketplace retine:
+        - dictionar cu toti producerii:
+            - key: id producer
+            - valoare: lista cu toate produsele
+        - dictionar cu toti clientii:
+            - key: id client
+            - valoare: dictionar cu toate cart-urile:
+                        - key: id cart
+                        - valoare: lista cu tupluri (id producator, produs)
+
+    Producerul adauga produse in lista sa din dictionar, daca e loc.
+
+    Consumerul cauta produse in listele producerilor, le sterge de acolo si isi
+adauga la el in lista tuplul (id producer, produs).
+    Cand vrea sa stearga ceva din cos, cauta producerul cu id-ul din tuplul care
+contine produsul de sters, sterge produsul de la el si il adauga inapoi in lista
+producatorului.
